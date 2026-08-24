@@ -1,0 +1,75 @@
+==============================================================================
+ QUR'ANIC WORD FREQUENCY ANALYZER
+==============================================================================
+ source     : D:\Claude\Work\quran.docx
+ output dir : D:\Claude\Work\output
+ pandas     : 3.0.5
+
+[PHASE 1] SAFE EXTRACTION
+    paragraphs extracted : 415
+    total characters     : 721974
+    integrity guards     : delText=0, sym=0, instrText=0  (enforced)
+
+[PHASE 1] STRUCTURING
+    [rule HEADER_TITLE_STRIP] surah 1: removed document title 'القرآن الكريم :' from header line
+    surah headers        : 114
+    blank paragraphs     : 76 (page-break artifacts, skipped)
+    [rule TRAILING_REMAINDER_AS_FINAL_AYAH] surah 15 (الحجر): inferred ayah 99 (Hafs expects final ayah 99) -> MATCH
+
+[PHASE 1] VALIDATION GATE (Hafs / Kufi counting)
+    reference table      : 114 surahs, sums to 6236
+    surah count          : 114  (expect 114)
+    total ayah count     : 6236  (expect 6236)
+    Al-Fatihah   == 7   : 7  [PASS]
+    Al-Baqarah   == 286 : 286  [PASS]
+    An-Nas       == 6   : 6  [PASS]
+    ayat containing digits/parens/Latin : 0  (expect 0)
+    empty ayah texts     : 0  (expect 0)
+    standalone Basmalahs : 111
+    absent for surahs    : [1, 9, 104]
+      -> surah 1 = Basmalah is ayah 1 (expected)
+      -> surah 9 = no Basmalah by tradition (expected)
+      -> surah 104 = ANOMALY, Basmalah absent from source (documented, not fixed)
+    >>> VALIDATION GATE PASSED <<<
+
+    -> quran_corpus.csv (6236 rows)
+    -> structural_elements.csv (114 rows)
+
+[PHASE 2] NORMALIZATION LAYER + CODEPOINT INVENTORY
+    distinct codepoints  : 59
+    -> codepoint_inventory.csv
+    form raw         :   685148 chars (     0 fewer than raw)
+    form no_marks    :   685148 chars (     0 fewer than raw)   [NO-OP: identical to raw]
+    form no_tashkeel :   408498 chars (276650 fewer than raw)
+    form normalized  :   408498 chars (276650 fewer than raw)
+
+[PHASE 3] WORD SEGMENTATION — FOUR DEFINITIONS
+    A:   78238   A — Whitespace tokens (raw), Basmalah included
+    B:   77794   B — Whitespace tokens, Basmalah excluded (except Al-Fatihah 1:1)
+    C:   77794   C — Definition B, with Muqatta'at forced to one token each
+    D:   77794   D — Fused orthographic units: FLAGGED, NOT SPLIT
+    (surah header tokens excluded from all definitions: 232)
+    fused units flagged for review : 1669
+    homographs suppressed by gate  : 171
+        لم: 163 occurrence(s) NOT flagged (homograph, not a fusion)
+        مال: 5 occurrence(s) NOT flagged (homograph, not a fusion)
+        إلا: 2 occurrence(s) NOT flagged (homograph, not a fusion)
+        أمن: 1 occurrence(s) NOT flagged (homograph, not a fusion)
+    -> review_needed.csv (1671 rows)
+    -> muqattaat_analysis.csv (30 rows)
+
+[PHASE 4] FREQUENCY ANALYSIS
+    raw         :   77794 tokens |  17576 unique |  10880 hapax
+    no_marks    :   77794 tokens |  17576 unique |  10880 hapax
+    no_tashkeel :   77794 tokens |  14872 unique |   8711 hapax
+    normalized  :   77794 tokens |  14652 unique |   8549 hapax
+
+    -> frequency_distribution*.csv
+    -> per_surah_statistics.csv (114 rows)
+
+[REPORT] writing summary_report.md
+    -> summary_report.md
+
+==============================================================================
+ PIPELINE COMPLETE
+==============================================================================
